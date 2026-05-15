@@ -58,6 +58,7 @@ import { TimedStartOverlay } from '@/components/game/TimedStartOverlay';
 import { FirstLaunchTourModal } from '@/components/game/FirstLaunchTourModal';
 import { useFirstLaunchTour } from '@/hooks/use-first-launch-tour';
 import { useShareCardTemplate } from '@/hooks/use-share-card-template';
+import { useShareLeaderboardRank } from '@/hooks/use-share-leaderboard-rank';
 import { ShareScoreCard, SHARE_CARD_W, SHARE_CARD_H } from '@/components/game/ShareScoreCard';
 import { ShareMenuModal } from '@/components/game/ShareMenuModal';
 import { captureShareScorePng } from '@/lib/capture-share-score';
@@ -110,6 +111,18 @@ export default function GameScreen() {
     const e = profile.email?.split('@')[0]?.trim();
     return e || 'Player';
   }, [profile]);
+
+  const shareRankBestScore = useMemo(() => {
+    const cloud = readCloudBestFromProfile(profile, settings.modeId, settings.size);
+    return Math.max(state.best, cloud, state.score);
+  }, [profile, settings.modeId, settings.size, state.best, state.score]);
+
+  const shareLeaderboardRank = useShareLeaderboardRank(
+    user?.id,
+    shareRankBestScore,
+    settings.modeId,
+    settings.size,
+  );
   const sessionStartedAtRef = useRef<number>(Date.now());
   const mergesTotalRef = useRef(0);
   const undosRef = useRef(0);
@@ -615,6 +628,7 @@ export default function GameScreen() {
           maxTile={state.maxTile}
           targetTile={modeRules.targetTile}
           displayName={shareDisplayName}
+          leaderboardRank={shareLeaderboardRank}
         />
       </View>
 

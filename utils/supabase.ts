@@ -1,18 +1,38 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { supabaseAuthStorage } from '@/lib/supabase-auth-storage';
 
-export const supabase = createClient(
-  process.env.EXPO_PUBLIC_SUPABASE_URL!,
-  process.env.EXPO_PUBLIC_SUPABASE_KEY!,
-  {
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_KEY!;
+
+let browserClient: SupabaseClient | null = null;
+
+function createBrowserSupabase(): SupabaseClient {
+  return createClient(supabaseUrl, supabaseKey, {
     auth: {
-      storage: AsyncStorage,
+      storage: supabaseAuthStorage,
       autoRefreshToken: true,
       persistSession: true,
-      detectSessionInUrl: false,
+      detectSessionInUrl: true,
     },
+  });
+}
+
+function getSupabase(): SupabaseClient {
+  if (typeof window === 'undefined') {
+    throw new Error('Supabase só está disponível no cliente (browser ou app).');
+  }
+  if (!browserClient) browserClient = createBrowserSupabase();
+  return browserClient;
+}
+
+export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
+  get(_target, prop, receiver) {
+    const client = getSupabase();
+    const value = Reflect.get(client, prop, receiver);
+    if (typeof value === 'function') return value.bind(client);
+    return value;
   },
-);
+});
 
 export type Profile = {
   id: string;

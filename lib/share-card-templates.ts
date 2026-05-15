@@ -13,13 +13,13 @@ export const SHARE_CARD_TEMPLATE_OPTIONS: {
   {
     id: 'vertical_hero',
     title: 'Vertical hero',
-    hint: 'Destaque da pontuação, mosaico de peças, tabuleiro completo',
+    hint: 'Pontuação em destaque, tabuleiro e ranking global',
     designReference: 'image_export/01 _ Vertical hero.html',
   },
   {
     id: 'vertical_achievement',
     title: 'Vertical achievement',
-    hint: 'Peça máxima em destaque, linha de história, tabuleiro completo',
+    hint: 'Peça máxima inclinada, história da conquista e ranking',
     designReference: 'image_export/02 _ Vertical achievement.html',
   },
 ];
