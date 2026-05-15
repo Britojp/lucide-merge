@@ -28,6 +28,14 @@
     "plugins": [
       "expo-router",
       [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow Lucid Merge to save score cards to your library.",
+          "savePhotosPermission": "Allow Lucid Merge to save score cards to your photos.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
